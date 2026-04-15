@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
 import sys
 from datetime import datetime
 from itertools import combinations
@@ -43,6 +45,24 @@ from dge_app.report import build_pdf_report
 from dge_app.validation import coerce_numeric_counts, parse_annotation_text, prepare_inputs
 
 st.set_page_config(page_title="DGE", page_icon="🧬", layout="wide")
+
+# Function to run the R installation script
+def verify_r_environment():
+    # We check for a 'flag' file to avoid running the 10-minute install on every refresh
+    if not os.path.exists("r_packages_installed.flag"):
+        with st.spinner("Installing Bioconductor packages (DESeq2, edgeR)... This may take 10-15 minutes."):
+            try:
+                # This runs your .R file exactly like you would in a terminal
+                subprocess.run(["Rscript", "install_r_packages.R"], check=True)
+                # Create the flag file
+                with open("r_packages_installed.flag", "w") as f:
+                    f.write("Success")
+                st.success("R environment ready!")
+            except subprocess.CalledProcessError as e:
+                st.error(f"R installation failed: {e}")
+                st.stop()
+
+verify_r_environment()
 
 
 # ─────────────────────────────────────────────────────────────────────────────
