@@ -46,6 +46,9 @@ from dge_app.validation import coerce_numeric_counts, parse_annotation_text, pre
 
 st.set_page_config(page_title="DGE", page_icon="🧬", layout="wide")
 
+local_r_path = os.path.join(os.getcwd(), "R_libs")
+os.environ['R_LIBS_USER'] = local_r_path
+
 # Function to run the R installation script
 def verify_r_environment():
     # We check for a 'flag' file to avoid running the 10-minute install on every refresh
